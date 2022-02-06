@@ -2,19 +2,20 @@ import type { ReactElement } from "react";
 import { useState, useRef, useEffect } from "react";
 import { RiEdit2Fill, RiDeleteBin6Fill } from "react-icons/ri";
 import { AiFillCheckCircle } from "react-icons/ai";
-import { MdDone } from "react-icons/md";
 import TodoItem from "../models/todo";
 
 export interface ToDoItemProps {
   todo: TodoItem;
   toDoList: TodoItem[];
   setToDoList: React.Dispatch<React.SetStateAction<TodoItem[]>>;
+  className?: string;
 }
 
 export default function ToDo({
   todo,
   toDoList,
   setToDoList,
+  className = "",
 }: ToDoItemProps): ReactElement {
   const [edit, setEdit] = useState<boolean>(false);
   const [text, setText] = useState<string>(todo.text);
@@ -45,7 +46,10 @@ export default function ToDo({
   };
 
   return (
-    <form className="todos__single" onSubmit={(e) => handleEdit(e, todo.id)}>
+    <form
+      className={`todos__single ${className}`}
+      onSubmit={(e) => handleEdit(e, todo.id)}
+    >
       {edit ? (
         <input
           onBlur={() => setEdit(false)}
