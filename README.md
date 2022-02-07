@@ -2,3 +2,7 @@
 with typescript
 
 
+Animation bug, fix needed 
+
+
+

@@ -69,7 +69,7 @@
 }
 
 .dragcomplete {
-  background-color: #f93c85;
+  background-color: #fca1c4;
 }
 
 .todos__single.remove {
@@ -113,6 +113,10 @@ s {
 
 .todos__single--text:focus {
   outline: none;
+}
+
+input.todos__single--text {
+  border-radius: 8px;
 }
 
 .icon {

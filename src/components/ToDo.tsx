@@ -3,12 +3,14 @@ import { useState, useRef, useEffect } from "react";
 import { RiEdit2Fill, RiDeleteBin6Fill } from "react-icons/ri";
 import { AiFillCheckCircle } from "react-icons/ai";
 import TodoItem from "../models/todo";
+import { Draggable } from "react-beautiful-dnd";
 
 export interface ToDoItemProps {
   todo: TodoItem;
   toDoList: TodoItem[];
   setToDoList: React.Dispatch<React.SetStateAction<TodoItem[]>>;
   className?: string;
+  index: number;
 }
 
 export default function ToDo({
@@ -16,6 +18,7 @@ export default function ToDo({
   toDoList,
   setToDoList,
   className = "",
+  index,
 }: ToDoItemProps): ReactElement {
   const [edit, setEdit] = useState<boolean>(false);
   const [text, setText] = useState<string>(todo.text);
@@ -46,35 +49,45 @@ export default function ToDo({
   };
 
   return (
-    <form
-      className={`todos__single ${className}`}
-      onSubmit={(e) => handleEdit(e, todo.id)}
-    >
-      {edit ? (
-        <input
-          onBlur={() => setEdit(false)}
-          className="todos__single--text"
-          ref={inputRef}
-          type=""
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-      ) : todo.isDone ? (
-        <s className="todos__single--text">{todo.text}</s>
-      ) : (
-        <span className="todos__single--text">{todo.text}</span>
+    <Draggable draggableId={todo.id.toString()} index={index}>
+      {(provided, snapshot) => (
+        <form
+          key={todo.id}
+          ref={provided.innerRef}
+          className={`todos__single ${className} ${
+            snapshot.isDragging ? "drag" : ""
+          }`}
+          onSubmit={(e) => handleEdit(e, todo.id)}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          {edit ? (
+            <input
+              onBlur={() => setEdit(false)}
+              className="todos__single--text"
+              ref={inputRef}
+              type=""
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          ) : todo.isDone ? (
+            <s className="todos__single--text">{todo.text}</s>
+          ) : (
+            <span className="todos__single--text">{todo.text}</span>
+          )}
+          <div>
+            <span className="icon" onClick={() => handleDelete(todo.id)}>
+              <RiDeleteBin6Fill />
+            </span>
+            <span className="icon" onClick={() => setEdit(!edit)}>
+              <RiEdit2Fill />
+            </span>
+            <span className="icon" onClick={() => handleToggleDone(todo.id)}>
+              <AiFillCheckCircle />
+            </span>
+          </div>
+        </form>
       )}
-      <div>
-        <span className="icon" onClick={() => handleDelete(todo.id)}>
-          <RiDeleteBin6Fill />
-        </span>
-        <span className="icon" onClick={() => setEdit(true)}>
-          <RiEdit2Fill />
-        </span>
-        <span className="icon" onClick={() => handleToggleDone(todo.id)}>
-          <AiFillCheckCircle />
-        </span>
-      </div>
-    </form>
+    </Draggable>
   );
 }
